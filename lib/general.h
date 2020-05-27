@@ -1,7 +1,6 @@
 #pragma once
 
-#include <vector>
-#include <functional>
+#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -14,12 +13,6 @@ using uli = unsigned __int128;
 using ld = long double;
 using pii = pair<int, int>;
 using vi = vector<int>;
-
-#ifdef LOCAL
-void signalHandler(int) {
-    throw "Abort detected";
-}
-#endif
 
 void doReplace() {
 }

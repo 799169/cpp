@@ -1,26 +1,26 @@
 #pragma once
 
 #include "../../general.h"
+#include "base_edge.h"
+#include "../graph.h"
 
-class BiEdge {
-private:
-    BiEdge* transposedEdge;
-
+class BiEdge : public BaseEdge {
 public:
-    const int from;
-    const int to;
-    int id;
+    const static bool reversable = true;
+    int rev;
 
-    BiEdge(int from, int to) : from(from), to(to) {
-        transposedEdge = new BiEdge(this);
+    BiEdge(int to, int id) : BaseEdge(to, id) {
     }
 
-    BiEdge* transposed() { return transposedEdge; }
-    BiEdge* reverse() { return nullptr; }
+    void setReverseId(int revId) {
+        rev = revId;
+    }
 
-private:
-    BiEdge(BiEdge* transposed) : from(transposed->to), to(transposed->from) {
-        transposedEdge = transposed;
+    BiEdge reverseEdge(int from) {
+        return BiEdge(from, id);
+    }
+
+    BiEdge& reverseEdge(Graph<BiEdge>& graph) {
+        return graph[to][rev];
     }
 };
-

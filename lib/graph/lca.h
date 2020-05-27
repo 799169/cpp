@@ -48,13 +48,13 @@ public:
             if (last[vertex] != -1) {
                 level[vertex] = level[last[vertex]] + 1;
             }
-            while (index[vertex] < graph[vertex].size() && last[vertex] == graph[vertex][index[vertex]]->to) {
+            while (index[vertex] < graph[vertex].size() && last[vertex] == graph[vertex][index[vertex]].to) {
                 index[vertex]++;
             }
             if (index[vertex] < graph[vertex].size()) {
                 stack[size++] = vertex;
-                int to = graph[vertex][index[vertex]]->to;
-                stack[size++] = graph[vertex][index[vertex]]->to;
+                int to = graph[vertex][index[vertex]].to;
+                stack[size++] = graph[vertex][index[vertex]].to;
                 last[to] = vertex;
                 index[vertex]++;
             }

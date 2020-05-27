@@ -6,14 +6,9 @@
 
 
 
-#include <cstdio>
-#include <cctype>
-#include <string>
-#include <cstring>
 
 
-#include <vector>
-#include <functional>
+#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -26,14 +21,6 @@ using uli = unsigned __int128;
 using ld = long double;
 using pii = pair<int, int>;
 using vi = vector<int>;
-
-#ifdef LOCAL
-
-void signalHandler(int) {
-    throw "Abort detected";
-}
-
-#endif
 
 void doReplace() {
 }
@@ -78,9 +65,6 @@ D dPower(D base, ll exponent) {
         return res * res;
     }
 }
-
-
-#include <algorithm>
 
 
 class NumberIterator : iterator<forward_iterator_tag, int> {
@@ -225,7 +209,7 @@ void decreaseByOne() {}
 template <typename T, class...Vs>
 void decreaseByOne(arr<T>& array, Vs& ...vs) {
     int n = array.size();
-    for (int i = 0; i < n; ++i) {
+    for (int i : range(n)) {
         array[i]--;
     }
     decreaseByOne(vs...);
@@ -328,6 +312,14 @@ public:
         return b[i1 * d2 + i2];
     }
 
+    T& operator[](const pii& p) {
+        return operator()(p.first, p.second);
+    }
+
+    const T& operator[](const pii& p) const {
+        return operator()(p.first, p.second);
+    }
+
     arr<T> operator[](int at) {
 #ifdef LOCAL
         if (at < 0 || at >= d1) {
@@ -339,7 +331,7 @@ public:
 
     vector<vector<T>> view() {
         vector<vector<T>> res(min(d1, 50));
-        for (int i = 0; i < res.size(); ++i) {
+        for (int i : range(res.size())) {
             res[i] = (*this)[i].view();
         }
         return res;
@@ -500,7 +492,7 @@ public:
     template <typename T>
     arr<T> readArray(int n) {
         arr<T> res(n, T());
-        for (int i = 0; i < n; i++) {
+        for (int i : range(n)) {
             res[i] = readType<T>();
         }
         return res;
@@ -510,7 +502,7 @@ public:
     template <class...Vs>
     void readArrays(int n, Vs& ...vs) {
         initArrays(n, vs...);
-        for (int i = 0; i < n; i++) {
+        for (int i : range(n)) {
             readImpl(i, vs...);
         }
     }
@@ -518,7 +510,7 @@ public:
     template <typename U, typename V>
     arr<pair<U, V>> readArray(int n) {
         arr<pair<U, V>> res(n);
-        for (int i = 0; i < n; i++) {
+        for (int i : range(n)) {
             res[i] = readType<U, V>();
         }
         return res;
@@ -527,8 +519,8 @@ public:
     template <typename T>
     arr2d<T> readTable(int rows, int cols) {
         arr2d<T> result(rows, cols);
-        for (int i = 0; i < rows; ++i) {
-            for (int j = 0; j < cols; ++j) {
+        for (int i : range(rows)) {
+            for (int j : range(cols)) {
                 result(i, j) = readType<T>();
             }
         }
@@ -657,37 +649,33 @@ inline string Input::readType() {
 Input in;
 
 
-#include <iostream>
-#include <iomanip>
-
-
 class Output {
 private:
-    ostream& out = cout;
+    ostream* out;
 
     template <typename T>
     inline void printSingle(const T& value) {
-        out << value;
+        *out << value;
     }
 
     template <typename T>
     void printSingle(const vector<T>& array) {
         size_t n = array.size();
-        for (int i = 0; i < n; ++i) {
-            out << array[i];
+        for (int i : range(n)) {
+            *out << array[i];
             if (i + 1 != n) {
-                out << ' ';
+                *out << ' ';
             }
         }
     }
 
     template <typename T>
     void printSingle(const arr<T>& array) {
-        size_t n = array.size();
-        for (int i = 0; i < n; ++i) {
-            out << array[i];
+        int n = array.size();
+        for (int i : range(n)) {
+            *out << array[i];
             if (i + 1 != n) {
-                out << ' ';
+                *out << ' ';
             }
         }
     }
@@ -696,15 +684,15 @@ private:
     void printSingle(const arr2d<T>& array) {
         size_t n = array.dim1();
         size_t m = array.dim2();
-        for (int i = 0; i < n; ++i) {
-            for (int j = 0; j < m; ++j) {
-                out << array(i, j);
+        for (int i : range(n)) {
+            for (int j : range(m)) {
+                *out << array(i, j);
                 if (j + 1 != m) {
-                    out << ' ';
+                    *out << ' ';
                 }
             }
             if (i + 1 != n) {
-                out << '\n';
+                *out << '\n';
             }
         }
     }
@@ -715,8 +703,15 @@ private:
     }
 
 public:
-    Output() {
-        out << fixed << setprecision(20);
+    bool autoflush;
+
+    Output(ostream& out, bool autoflush) : out(&out), autoflush(autoflush) {
+        setPrecision(20);
+    }
+
+    void setOut(ostream& nOut) {
+        out = &nOut;
+        setPrecision(20);
     }
 
     inline void print() {}
@@ -725,179 +720,185 @@ public:
     inline void print(const T& first, const Targs... args) {
         printSingle(first);
         if (sizeof...(args) != 0) {
-            out << ' ';
+            *out << ' ';
             print(args...);
+        }
+        if (autoflush) {
+            flush();
         }
     }
 
     template <typename...Targs>
     inline void printLine(const Targs... args) {
         print(args...);
-        out << '\n';
+        *out << '\n';
+        if (autoflush) {
+            flush();
+        }
     }
 
     inline void flush() {
-        out.flush();
+        out->flush();
     }
 
     inline void setPrecision(int digs) {
-        out << fixed << setprecision(digs);
+        *out << fixed << setprecision(digs);
     }
 };
 
-Output out;
+Output out(cout, false);
+Output err(cerr, true);
 
 
-template <class Edge>
-class Graph {
+class ReverseNumberIterator : public NumberIterator {
 public:
-    int vertexCount;
-    int edgeCount = 0;
-private:
-    vector<vector<Edge*>> edges;
+    ReverseNumberIterator(int v) : NumberIterator(v) {}
 
+    ReverseNumberIterator& operator++() {
+        --v;
+        return *this;
+    }
+};
+
+class RevRange : pii {
 public:
-    Graph(int vertexCount) : vertexCount(vertexCount), edges(vertexCount, vector<Edge*>()) {}
+    RevRange(int begin, int end) : pii(begin - 1, min(begin, end) - 1) {}
 
-    void addEdge(Edge* edge) {
-#ifdef LOCAL
-        if (edge->from < 0 || edge->to < 0 || edge->from >= vertexCount || edge->to >= vertexCount) {
-            throw "Out of bounds";
-        }
-#endif
-        edge->id = edgeCount;
-        edges[edge->from].push_back(edge);
-        Edge* reverse = edge->reverse();
-        if (reverse != nullptr) {
-            reverse->id = edgeCount;
-            edges[reverse->from].push_back(reverse);
-        }
-        Edge* transposed = edge->transposed();
-        if (transposed != nullptr) {
-            edges[transposed->from].push_back(transposed);
-            transposed->id = edgeCount;
-            Edge* transRev = transposed->reverse();
-            if (transRev != nullptr) {
-                edges[transRev->from].push_back(transRev);
-                transRev->id = edgeCount;
-            }
-        }
-        edgeCount++;
+    RevRange(int n) : pii(n - 1, min(n, 0) - 1) {}
+
+    ReverseNumberIterator begin() {
+        return first;
     }
 
-    template <typename...Ts>
-    void addEdge(Ts...args) {
-        addEdge(new Edge(args...));
-    }
-
-    vector<Edge*>& operator[](int at) {
-        return edges[at];
-    }
-
-    void addVertices(int count) {
-        vertexCount += count;
-        edges.resize(vertexCount);
+    ReverseNumberIterator end() {
+        return second;
     }
 };
 
 
-class BiEdge {
-private:
-    BiEdge* transposedEdge;
-
-public:
-    const int from;
-    const int to;
-    int id;
-
-    BiEdge(int from, int to) : from(from), to(to) {
-        transposedEdge = new BiEdge(this);
-    }
-
-    BiEdge* transposed() { return transposedEdge; }
-
-    BiEdge* reverse() { return nullptr; }
-
-private:
-    BiEdge(BiEdge* transposed) : from(transposed->to), to(transposed->from) {
-        transposedEdge = transposed;
-    }
-};
-
-
-template <typename T>
-class RecursiveFunction {
-    T t;
-
-public:
-    RecursiveFunction(T&& t) : t(forward<T>(t)) {}
-
-    template <typename... Args>
-    auto operator()(Args&& ... args) const {
-        return t(*this, forward<Args>(args)...);
-    }
-};
-
-
-class FLISOnTree {
+class FVkusnayaPechenka {
 public:
     void solve() {
         int n = in.readInt();
-        auto a = in.readIntArray(n);
-        arri u, v;
-        in.readArrays(n - 1, u, v);
-        decreaseByOne(u, v);
+        auto a = in.readLongArray(n);
+        auto b = in.readLongArray(n);
 
-        Graph<BiEdge> graph(n);
-        for (int i : range(n - 1)) {
-            graph.addEdge(u[i], v[i]);
-        }
-        arri answer(n);
-        vi seq;
-        RecursiveFunction dfs = [&](const auto& self, int vert, int last) -> void {
-            int pos = lower_bound(all(seq), a[vert]) - seq.begin();
-            int was = pos == seq.size() ? -1 : seq[pos];
-            if (pos < seq.size()) {
-                seq[pos] = a[vert];
-            } else {
-                seq.push_back(a[vert]);
+        if (n == 1) {
+            if (a[0] == b[0]) {
+                out.printLine("SMALL");
+                out.printLine(0);
+                return;
             }
-            answer[vert] = seq.size();
-            for (auto* e : graph[vert]) {
-                int next = e->to;
-                if (next == last) {
-                    continue;
+            out.printLine("IMPOSSIBLE");
+            return;
+        }
+        ll sumA = accumulate(all(a), 0ll);
+        if (n == 2) {
+            vector<pair<ll, char>> ops;
+            ll ps = 0;
+            while (b[0] + b[1] > sumA && b[0] > 0) {
+                ll times = min((b[0] + b[1] - sumA + b[0] - 1) / b[0], b[1] / b[0]);
+                ps += times;
+                b[1] -= b[0] * times;
+                ops.emplace_back(times, 'P');
+                swap(b[0], b[1]);
+                ops.emplace_back(1, 'R');
+            }
+            if (b[0] == a[1] && b[1] == a[0]) {
+                swap(b[0], b[1]);
+                ops.emplace_back(1, 'R');
+            }
+            if (b[0] == a[0] && b[1] == a[1]) {
+                if (ps <= 200000) {
+                    reverse(all(ops));
+                    string answer = "";
+                    for (const auto& p : ops) {
+                        answer += string(p.first, p.second);
+                    }
+                    out.printLine("SMALL");
+                    out.printLine(answer.size());
+                    out.printLine(answer);
+                    return;
+                } else {
+                    out.printLine("BIG");
+                    out.printLine(ps);
+                    return;
                 }
-                self(next, vert);
             }
-            if (was == -1) {
-                seq.pop_back();
-            } else {
-                seq[pos] = was;
-            }
-        };
-        dfs(0, -1);
-        for (int i : answer) {
-            out.printLine(i);
+            out.printLine("IMPOSSIBLE");
+            return;
         }
+        string answer = "";
+        ll ps = 0;
+        while (accumulate(all(b), 0ll) > sumA) {
+            bool direct = true;
+            bool rev = true;
+            for (int i : range(1, n)) {
+                if (b[i] >= b[i - 1]) {
+                    rev = false;
+                }
+                if (b[i] <= b[i - 1]) {
+                    direct = false;
+                }
+            }
+            if (!direct && !rev) {
+                out.printLine("IMPOSSIBLE");
+                return;
+            }
+            if (rev) {
+                reverse(all(b));
+                answer += "R";
+            }
+            answer += "P";
+            ps++;
+            for (int i : RevRange(n - 1)) {
+                b[i + 1] -= b[i];
+            }
+        }
+        bool needRev = true;
+        for (int i : range(n)) {
+            if (a[i] != b[n - i - 1]) {
+                needRev = false;
+            }
+        }
+        if (needRev) {
+            reverse(all(b));
+            answer += "R";
+        }
+        for (int i : range(n)) {
+            if (a[i] != b[i]) {
+                out.printLine("IMPOSSIBLE");
+                return;
+            }
+        }
+        if (ps > 200000) {
+            out.printLine("BIG");
+            out.printLine(ps);
+            return;
+        }
+        reverse(all(answer));
+        out.printLine("SMALL");
+        out.printLine(answer.size());
+        out.printLine(answer);
     }
 };
 
 
 int main() {
-#ifdef LOCAL
-    signal(SIGABRT, &signalHandler);
-#endif
     std::ios::sync_with_stdio(false);
     std::cin.tie(0);
+#ifdef LOCAL_RELEASE
     freopen("input.txt", "r", stdin);
     freopen("output.txt", "w", stdout);
     auto time = clock();
-    FLISOnTree solver;
+#endif
+    FVkusnayaPechenka solver;
 
 
     solver.solve();
     fflush(stdout);
+#ifdef LOCAL_RELEASE
     cerr << clock() - time << endl;
+#endif
     return 0;
 }

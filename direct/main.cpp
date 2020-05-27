@@ -1,14 +1,27 @@
 #include <cstdio>
+#include <random>
+#include "../lib/bits.h"
+#include "../lib/range/range.h"
 #include "../lib/io/output.h"
 
 int main() {
-    freopen("input.txt", "w", stdout);
-    int n = 1000000;
-    out.printLine(n);
-    out.printLine(vi(n, 1));
-    for (int i : range(2, n + 1)) {
-        out.printLine(i / 10 + 1, i);
+    auto maxDigit = [&](ll prefix) -> int {
+        int res = 0;
+        while (prefix != 0) {
+            maxim(res, int(prefix % 10));
+            prefix /= 10;
+        }
+        return res;
+    };
+    int a = 123;
+    int m = 876543;
+    int n = 369277;
+    for (int i : range(n)) {
+        a += maxDigit(a);
+        if (a >= m) {
+            out.printLine(i + 1, a - m);
+        }
+        a %= m;
     }
-    out.flush();
-    return 0;
+    out.printLine(a);
 }

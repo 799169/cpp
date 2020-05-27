@@ -1,9 +1,5 @@
 #pragma once
 
-#include <cstdio>
-#include <cctype>
-#include <string>
-#include <cstring>
 #include "../general.h"
 #include "../numbers/doubles.h"
 #include "../collections/arr.h"
@@ -156,7 +152,7 @@ public:
     template<typename T>
     arr<T> readArray(int n) {
         arr<T> res(n, T());
-        for (int i = 0; i < n; i++) {
+        for (int i : range(n)) {
             res[i] = readType<T>();
         }
         return res;
@@ -167,7 +163,7 @@ public:
     template <class...Vs>
     void readArrays(int n, Vs&...vs) {
         initArrays(n, vs...);
-        for (int i = 0; i < n; i++) {
+        for (int i : range(n)) {
             readImpl(i, vs...);
         }
     }
@@ -175,7 +171,7 @@ public:
     template<typename U, typename V>
     arr<pair<U, V> > readArray(int n) {
         arr<pair<U, V> > res(n);
-        for (int i = 0; i < n; i++) {
+        for (int i : range(n)) {
             res[i] = readType<U, V>();
         }
         return res;
@@ -184,8 +180,8 @@ public:
     template<typename T>
     arr2d<T> readTable(int rows, int cols) {
         arr2d<T> result(rows, cols);
-        for (int i = 0; i < rows; ++i) {
-            for (int j = 0; j < cols; ++j) {
+        for (int i : range(rows)) {
+            for (int j : range(cols)) {
                 result(i, j) = readType<T>();
             }
         }
